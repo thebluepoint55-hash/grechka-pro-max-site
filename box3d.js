@@ -13,7 +13,11 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = t => t * t * (3 - 2 * t);
 const damp = (rate, dt) => 1 - Math.exp(-rate * dt);
 
-function fail() { root.classList.add("no-webgl"); }
+// 3D не заработало: показываем фото коробки (их грузим только в этом случае)
+function fail() {
+  root.classList.add("no-webgl");
+  document.querySelectorAll("img.poster[data-src]").forEach(img => { img.src = img.dataset.src; });
+}
 const domReady = () => document.readyState !== "loading" ? Promise.resolve()
   : new Promise(r => document.addEventListener("readystatechange", r, { once: true }));
 
@@ -56,12 +60,15 @@ async function main() {
   if (!canvas) return;
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+    // Аппаратное сглаживание (MSAA) на весь экран съедало половину кадра на встроенных видеокартах.
+    // Вместо него рисуем в 1,5× и даём браузеру уменьшить картинку — края остаются гладкими.
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: "high-performance" });
   } catch (e) { return fail(); }
 
   const isMobile = matchMedia("(max-width: 767px)").matches;
   // не больше 2× и не больше ~4,5 млн пикселей на холст
-  const pixelRatio = () => Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(4.5e6 / Math.max(1, innerWidth * innerHeight)));
+  // Всегда 1,5× (это и есть сглаживание), но не больше ~2,2 млн пикселей на холст
+  const pixelRatio = () => Math.min(1.5, Math.sqrt(2.2e6 / Math.max(1, innerWidth * innerHeight)));
   renderer.setPixelRatio(pixelRatio());
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -141,9 +148,6 @@ async function main() {
       metalness: 1, metalnessMap: mk,
       clearcoat: 1, clearcoatMap: mk,
       clearcoatRoughness: 0.035,
-      sheen: 0.35,
-      sheenRoughness: 0.75,
-      sheenColor: new THREE.Color(0xffffff),
     });
     m.onBeforeCompile = injectTint;
     return m;

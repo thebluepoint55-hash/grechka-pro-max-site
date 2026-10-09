@@ -106,7 +106,16 @@
   for (let i = 0; i < 3; i++) SRC.husk.push(procHusk(i * 0.7));
   KINDS.forEach(k => SRC[k].forEach(c => { c._ref = 80; }));
 
-  // настоящие спрайты, если их уже положили
+  // Настоящие спрайты (~1,5 МБ) качаем не при открытии страницы, а когда до блоков
+  // «рассыпается» или игры остаётся пара экранов — чтобы не мешать первой загрузке.
+  const spriteIo = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    spriteIo.disconnect();
+    loadSprites();
+  }, { rootMargin: "200% 0px" });
+  ["spill", "game"].forEach(id => { const el = document.getElementById(id); if (el) spriteIo.observe(el); });
+
+  function loadSprites() {
   fetch("img/grains/manifest.json", { cache: "no-cache" })
     .then(r => (r.ok ? r.json() : null))
     .then(m => {
@@ -130,6 +139,7 @@
       });
     })
     .catch(() => {});
+  }
 
   const SHADOW = (() => {
     const c = canvas(64, 64), g = c.getContext("2d");
