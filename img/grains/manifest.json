@@ -1,0 +1,58 @@
+{
+  "grain": [
+    "grain-01.png",
+    "grain-02.png",
+    "grain-03.png",
+    "grain-04.png",
+    "grain-05.png",
+    "grain-06.png",
+    "grain-07.png",
+    "grain-08.png",
+    "grain-09.png",
+    "grain-10.png",
+    "grain-11.png",
+    "grain-12.png",
+    "grain-13.png",
+    "grain-14.png",
+    "grain-15.png",
+    "grain-16.png",
+    "grain-17.png",
+    "grain-18.png",
+    "grain-19.png",
+    "grain-20.png",
+    "grain-21.png",
+    "grain-22.png",
+    "grain-23.png",
+    "grain-24.png",
+    "grain-25.png",
+    "grain-26.png",
+    "grain-27.png",
+    "grain-28.png"
+  ],
+  "stone": [
+    "stone-01.png",
+    "stone-02.png",
+    "stone-03.png",
+    "stone-04.png",
+    "stone-05.png",
+    "stone-06.png",
+    "stone-07.png",
+    "stone-08.png"
+  ],
+  "black": [
+    "black-01.png",
+    "black-02.png",
+    "black-03.png",
+    "black-04.png",
+    "black-05.png",
+    "black-06.png",
+    "black-07.png"
+  ],
+  "husk": [
+    "husk-01.png",
+    "husk-02.png",
+    "husk-03.png",
+    "husk-04.png",
+    "husk-05.png"
+  ]
+}

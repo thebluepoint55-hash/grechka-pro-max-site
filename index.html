@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Гречка Pro MAX — ядрица. Переосмыслена.</title>
+  <meta name="description" content="Гречка Pro MAX: 8 ядер в каждой горсти, титановая коробка, варка 20 минут. От 4 990 ₽.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <!-- карта модулей должна стоять до любой загрузки модулей -->
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+  <!-- 3D-коробка: всё нужное качаем сразу, параллельно со страницей -->
+  <link rel="modulepreload" href="vendor/three/three.module.min.js">
+  <link rel="modulepreload" href="vendor/three/addons/RoundedBoxGeometry.js">
+  <link rel="modulepreload" href="vendor/three/addons/RoomEnvironment.js">
+  <link rel="modulepreload" href="box3d.js">
+  <link rel="preload" href="img/pack/front.jpg" as="image" fetchpriority="high">
+  <link rel="preload" href="img/pack/back.jpg" as="image">
+  <link rel="preload" href="img/pack/left.jpg" as="image">
+  <link rel="preload" href="img/pack/right.jpg" as="image">
+  <link rel="preload" href="img/pack/top.jpg" as="image">
+  <link rel="preload" href="img/pack/bottom.jpg" as="image">
+  <link rel="preload" href="img/pack/front-mask.png" as="image">
+  <link rel="preload" href="img/pack/back-mask.png" as="image">
+  <link rel="preload" href="img/pack/left-mask.png" as="image">
+  <link rel="preload" href="img/pack/top-mask.png" as="image">
+  <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+
+<!-- Значки: зерно, звезда, галочка, крестик -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9A5F2E"/><stop offset="1" stop-color="#5E3417"/></linearGradient>
+    <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D49455"/><stop offset="1" stop-color="#94592A"/></linearGradient>
+    <symbol id="grain" viewBox="0 0 100 100">
+      <path d="M50 10 L14 80 Q12 86 20 87 L50 92 Z" fill="url(#gL)" stroke="#5E3417" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M50 10 L86 80 Q88 86 80 87 L50 92 Z" fill="url(#gR)" stroke="#94592A" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M50 14 L50 88" stroke="#F0C48E" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="star" viewBox="0 0 20 20"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z" fill="currentColor"/></symbol>
+    <symbol id="check" viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="cross" viewBox="0 0 20 20"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<!-- Сцена с 3D-коробкой: одна на всю страницу, коробка переезжает между секциями -->
+<canvas class="scene" id="scene" aria-hidden="true"></canvas>
+
+<header class="nav" id="nav">
+  <div class="container nav__inner">
+    <a class="logo" href="#top" aria-label="Крупа, на главную">КРУПА<i aria-hidden="true"></i></a>
+    <nav class="nav__links" aria-label="Разделы">
+      <a href="#tech">Технологии</a>
+      <a href="#box">В коробке</a>
+      <a href="#compare">Сравнить</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#game">Игра</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a class="btn btn--dark btn--sm" href="#prices">Предзаказать</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- 1. Первый экран -->
+  <section class="hero" aria-labelledby="hero-title">
+    <p class="hero__eyebrow mono">Новинка 2026</p>
+    <h1 id="hero-title" class="hero__title"><span>Гречка</span> <span class="pro">Pro MAX</span></h1>
+
+    <div class="hero__stage stage" data-anchor="hero" aria-label="Коробка Гречки Pro MAX. Её можно покрутить" role="img">
+      <img class="poster poster--hero" src="img/pack/hero.webp" alt="" width="1024" height="1536" loading="lazy">
+    </div>
+
+    <div class="container hero__foot">
+      <div class="hero__lead">
+        <p class="hero__claim">Ядрица. Переосмыслена.</p>
+        <p>Титановая коробка, 8&nbsp;ядер в&nbsp;каждой горсти и&nbsp;варка, которая ощущается как 15&nbsp;минут.</p>
+        <a class="link-arrow" href="#box">Смотреть распаковку <span aria-hidden="true">→</span></a>
+      </div>
+      <ul class="hero__nums" aria-label="Главное">
+        <li><b>8</b><span>ядер</span></li>
+        <li><b>20</b><span>минут</span></li>
+        <li><b>800</b><span>грамм</span></li>
+      </ul>
+      <p class="hero__facts mono">Курьер в белых перчатках · 2 часа · Гарантия 2 года</p>
+    </div>
+  </section>
+
+  <!-- 2. Узнавание -->
+  <section class="section pain" id="pain" aria-labelledby="pain-title">
+    <div class="container pain__grid">
+      <div class="pain__copy">
+        <p class="eyebrow reveal">Узнаёте себя?</p>
+        <h2 id="pain-title" class="h2 reveal">Вы всё ещё едите гречку как&nbsp;в&nbsp;2007-м.</h2>
+        <ol class="pains">
+          <li class="reveal">
+            <span class="mono">01</span>
+            <h3>Перебирать перед варкой</h3>
+            <p>По зёрнышку, на клеёнке, полчаса. Как бабушка учила. В&nbsp;2026 году.</p>
+          </li>
+          <li class="reveal">
+            <span class="mono">02</span>
+            <h3>«А это что, просто гречка?»</h3>
+            <p>Гости смотрят в тарелку, потом на вас. Повисает пауза. Вы начинаете рассказывать про железо.</p>
+          </li>
+          <li class="reveal">
+            <span class="mono">03</span>
+            <h3>Каша с экосистемой*</h3>
+            <p>Синхронизируется с котлеткой, солёными огурчиками и сливочным маслом. Без проводов.</p>
+            <p class="footnote">* Совместимо только с продуктами бренда «Крупа». С котлетами других брендов не синхронизируется.</p>
+          </li>
+        </ol>
+      </div>
+      <div class="pain__stage stage" data-anchor="pain" aria-hidden="true">
+        <img class="poster" src="img/pack/front-reflect.webp" alt="" width="1024" height="1536" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Что изменится: сцены с поворотом коробки -->
+  <section class="tech" id="tech" aria-labelledby="tech-title">
+    <div class="container tech__intro">
+      <p class="eyebrow reveal">Технологии</p>
+      <h2 id="tech-title" class="h1 scrub">Самая мощная гречка из всех, что мы&nbsp;когда-либо насыпали.</h2>
+    </div>
+
+    <div class="scenes" id="scenes">
+      <div class="scenes__sticky">
+        <div class="container scenes__grid">
+          <div class="scenes__stage stage" data-anchor="tech" aria-hidden="true">
+            <img class="poster" src="img/pack/back.jpg" alt="" width="875" height="1400" loading="lazy">
+          </div>
+          <div class="scenes__panels">
+            <article class="scene-panel is-active" data-step="0">
+              <p class="mono">01 · Ядра</p>
+              <h3><span class="count" data-to="8">8</span> ядер</h3>
+              <p>в каждой горсти. Ядрица — от слова «ядро». Технически мы не врём.</p>
+            </article>
+            <article class="scene-panel" data-step="1">
+              <p class="mono">02 · Процессор</p>
+              <h3>G1 Pro&nbsp;MAX</h3>
+              <p>Главный процессор системы. Это вы, когда помешиваете.</p>
+            </article>
+            <article class="scene-panel" data-step="2">
+              <p class="mono">03 · Быстрый старт</p>
+              <h3>20 минут</h3>
+              <p>Варка как у обычной гречки. Но ощущается как 15.</p>
+            </article>
+            <article class="scene-panel" data-step="3">
+              <p class="mono">04 · Корпус</p>
+              <h3>Титановая коробка</h3>
+              <p>Упаковка из «авиационного» картона. Картон цвета титана.</p>
+            </article>
+            <article class="scene-panel" data-step="4">
+              <p class="mono">05 · Режим</p>
+              <h3>Always-On Каша</h3>
+              <p>Если не выключить плиту, каша всегда включена.</p>
+            </article>
+            <div class="scenes__progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Что изменится: бенто -->
+  <section class="section bento-wrap" aria-label="Ещё характеристики">
+    <div class="container">
+      <div class="bento">
+        <article class="card card--photo reveal">
+          <img src="img/pack/window.webp" alt="Окно коробки крупным планом: зёрна гречки за плёнкой" width="1536" height="1024" loading="lazy">
+          <div class="card__over">
+            <p class="mono">Макро</p>
+            <h3>Каждое зёрнышко в&nbsp;фокусе.</h3>
+            <p>Отобрано вручную и&nbsp;знает своё место в&nbsp;горсти. Все восемь ядер на&nbsp;месте.</p>
+          </div>
+        </article>
+
+        <article class="card card--butter reveal">
+          <p class="mono">Совместимость</p>
+          <p class="card__big">Масло+</p>
+          <p>Каши маслом не испортишь. Протестировано в течение 1000 лет.</p>
+        </article>
+
+        <article class="card card--ip reveal">
+          <div class="ripple" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p class="mono">Влагозащита</p>
+          <p class="card__big">IP-Каша</p>
+          <p>Не боится воды. Наоборот — чувствует себя в&nbsp;ней как дома.</p>
+        </article>
+
+        <article class="card card--spoon reveal">
+          <svg class="spoon" viewBox="0 0 120 40" aria-hidden="true"><ellipse class="spoon__bowl" cx="28" cy="20" rx="22" ry="13"/><path d="M50 20 H112" /></svg>
+          <p class="mono">Dynamic Ложка</p>
+          <h3>Углубление подстраивается под&nbsp;кашу.</h3>
+          <p>Ложка продаётся отдельно.</p>
+        </article>
+
+        <article class="card card--plates reveal">
+          <div class="plates" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="mono">Экосистема</p>
+          <h3>Совместима со&nbsp;всеми тарелками.</h3>
+          <p>Даже с&nbsp;Android.</p>
+        </article>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal"><p class="stat__n"><span class="count" data-to="1000">0</span></p><p>лет испытаний на&nbsp;бабушках</p></div>
+        <div class="stat reveal"><p class="stat__n">×<span class="count" data-to="1" data-dec="1">0</span></p><p>скорость варки по&nbsp;сравнению с&nbsp;обычной гречкой</p></div>
+        <div class="stat reveal"><p class="stat__n"><span class="count" data-to="100">0</span>%</p><p>гречки в&nbsp;составе. Мы проверили</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- В коробке -->
+  <section class="section inbox" id="box" aria-labelledby="box-title">
+    <div class="container inbox__grid">
+      <figure class="inbox__photo">
+        <img src="img/pack/open.webp" alt="Коробка Гречки Pro MAX с поднятой крышкой, внутри пакет с крупой" width="1024" height="1536" loading="lazy">
+      </figure>
+      <div class="inbox__copy">
+        <p class="eyebrow reveal">Экологичность</p>
+        <h2 id="box-title" class="h2 reveal">Ради планеты мы убрали из&nbsp;комплекта всё. Кроме гречки. И&nbsp;цены.</h2>
+        <p class="lead reveal">Меньше вещей в коробке — меньше следа на планете и больше места для гордости.</p>
+        <ul class="inbox__list reveal" aria-label="Комплектация">
+          <li class="yes"><span>Гречка Pro MAX</span><b>в комплекте</b></li>
+          <li><span>Кастрюля</span><b>не входит</b></li>
+          <li><span>Ложка</span><b>продаётся отдельно</b></li>
+          <li><span>Масло</span><b>не входит</b></li>
+          <li><span>Соль</span><b>по подписке</b></li>
+          <li><span>Вода</span><b>из-под крана</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Гречка рассыпается -->
+  <section class="spill" id="spill" aria-labelledby="spill-title">
+    <div class="spill__sticky">
+      <canvas class="spill__canvas" aria-hidden="true"></canvas>
+      <div class="container spill__grid">
+        <div class="spill__copy">
+          <p class="eyebrow reveal">Краш-тест</p>
+          <h2 id="spill-title" class="h2 reveal">Даже рассыпается премиально.</h2>
+          <p class="lead reveal">Каждое зерно падает по&nbsp;заранее рассчитанной траектории. Убирать всё равно вам.</p>
+          <p class="spill__count mono">Рассыпано зёрен: <b>0</b></p>
+        </div>
+        <div class="spill__stage stage" data-anchor="spill" aria-hidden="true">
+          <img class="poster" src="img/pack/spill.webp" alt="" width="1536" height="1024" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Как проходит -->
+  <section class="section how" aria-labelledby="how-title">
+    <div class="container">
+      <p class="eyebrow reveal">Как это работает</p>
+      <h2 id="how-title" class="h2 reveal">Пять шагов от&nbsp;заказа до&nbsp;новой жизни.</h2>
+      <ol class="steps" id="steps">
+        <li class="reveal"><span class="mono">01</span><h3>Заказ в один клик</h3><p>Выбираете цвет и объём памяти. Нажимаете кнопку.</p></li>
+        <li class="reveal"><span class="mono">02</span><h3>Курьер в перчатках</h3><p>Белых. Звонит в течение 2 часов, говорит шёпотом.</p></li>
+        <li class="reveal"><span class="mono">03</span><h3>Распаковка</h3><p>12 минут. Снимать обязательно, иначе не считается.</p></li>
+        <li class="reveal"><span class="mono">04</span><h3>Варка</h3><p>20 минут. Помешивайте — так работает чип G1.</p></li>
+        <li class="reveal"><span class="mono">05</span><h3>Рассказать всем</h3><p>Самый важный шаг. Гречку можно не доедать.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. Кто мы -->
+  <section class="section lab" aria-labelledby="lab-title">
+    <div class="container lab__grid">
+      <p class="lab__num reveal" aria-hidden="true"><span class="count" data-to="347">0</span></p>
+      <div>
+        <p class="eyebrow reveal">Кто мы · Крупа Labs</p>
+        <h2 id="lab-title" class="h2 reveal">347 инженеров-крупологов. 346&nbsp;из&nbsp;них&nbsp;— бабушки.</h2>
+        <p class="lead reveal">Отбор зерна вручную, поштучно и&nbsp;с&nbsp;уважением.</p>
+        <blockquote class="quote reveal">
+          <p>«Мы перебрали каждое зёрнышко. Руками. Дважды. Третий раз — на&nbsp;всякий случай».</p>
+          <footer class="mono">Главный инженер по сыпучим продуктам</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Кейсы: до и после -->
+  <section class="section ba-wrap" id="compare" aria-labelledby="ba-title">
+    <div class="container">
+      <div class="head-row">
+        <div>
+          <p class="eyebrow reveal">До и после</p>
+          <h2 id="ba-title" class="h2 reveal">Найдите 10&nbsp;отличий.</h2>
+        </div>
+        <p class="lead reveal">Мы нашли одно. Оно справа внизу, в&nbsp;чеке.</p>
+      </div>
+      <div class="ba reveal" id="ba">
+        <div class="ba__side ba__before"><div class="plate"></div><span class="ba__label mono">Обычная гречка · 89 ₽</span></div>
+        <div class="ba__side ba__after"><div class="plate plate--pro"></div><span class="ba__label ba__label--pro mono">Гречка Pro MAX · <b>4 990 ₽</b></span></div>
+        <div class="ba__handle" aria-hidden="true"><span></span></div>
+        <input class="ba__range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Сравнить до и после">
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Отзывы -->
+  <section class="section reviews-wrap" id="reviews" aria-labelledby="rev-title">
+    <div class="container">
+      <p class="eyebrow reveal">Отзывы</p>
+      <h2 id="rev-title" class="h2 reveal">Что говорят первые владельцы.</h2>
+      <div class="reviews">
+        <figure class="review reveal">
+          <div class="stars" role="img" aria-label="5 из 5"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></div>
+          <blockquote>«Внучек, это та же гречка».</blockquote>
+          <figcaption><b>Бабушка Валя, 78 лет</b><span>Поставила пять звёзд, потому что внучек</span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars" role="img" aria-label="5 из 5"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></div>
+          <blockquote>«Сварил, сфоткал в режиме „Портрет“, выложил. Есть не стал — жалко».</blockquote>
+          <figcaption><b>Артём, блогер</b><span>12 подписчиков, все довольны</span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars" role="img" aria-label="5 из 5"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></div>
+          <blockquote>«Наконец-то гречка, которую не стыдно поставить на стол переговоров».</blockquote>
+          <figcaption><b>Игорь, CEO</b><span>Стартап на стадии идеи</span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars" role="img" aria-label="4 из 5"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg class="off"><use href="#star"/></svg></div>
+          <blockquote>«Купил три коробки. Жена думает, что я взял новый телефон. Не разубеждаю».</blockquote>
+          <figcaption><b>Денис, муж</b><span>Минус звезда — за жену</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Игра «Переберите гречку» -->
+  <section class="section game" id="game" aria-labelledby="game-title">
+    <div class="container">
+      <div class="head-row">
+        <div>
+          <p class="eyebrow reveal">Игра</p>
+          <h2 id="game-title" class="h2 reveal">Переберите гречку.</h2>
+        </div>
+        <p class="lead reveal">Перебирать перед варкой. Как бабушка учила. В&nbsp;2026&nbsp;году. Теперь за&nbsp;51&nbsp;₽.</p>
+      </div>
+
+      <div class="board reveal">
+        <div class="board__hud" aria-live="off">
+          <span><i class="mono">Время</i><b data-hud="time">0:30</b></span>
+          <span><i class="mono">Очки</i><b data-hud="score">0</b></span>
+          <span><i class="mono">Мусора осталось</i><b data-hud="left">—</b></span>
+          <span class="board__combo" data-hud="combo"></span>
+        </div>
+        <canvas class="board__canvas" aria-label="Игровое поле: гречка на клеёнке"></canvas>
+        <div class="board__bowl" aria-hidden="true"><span></span><p class="mono">Мусор · <b>0</b></p></div>
+        <div class="board__bubble" aria-live="polite"></div>
+
+        <div class="board__screen board__start"><div class="board__card">
+          <p class="mono">30 секунд · клеёнка · мисочка</p>
+          <h3>Камушки, чёрные зёрна и&nbsp;шелуху&nbsp;— в&nbsp;мисочку.</h3>
+          <p>Хорошую гречку не трогайте. Шелуху можно сдуть быстрым движением мыши или пальца.</p>
+          <button class="btn btn--big" type="button" data-play>Сыграть — 51 ₽</button>
+          <p class="board__spent">Потрачено на игру: <b data-spent>0</b> ₽</p>
+        </div></div>
+
+        <div class="board__screen board__end" hidden><div class="board__card">
+          <p class="mono">Результат</p>
+          <p class="end__score">0</p>
+          <p class="end__text"></p>
+          <p class="end__penalty"></p>
+          <p class="end__joke">В&nbsp;Pro&nbsp;MAX мы перебрали всё за&nbsp;вас.</p>
+          <div class="end__btns">
+            <button class="btn btn--big" type="button" data-order>Предзаказать</button>
+            <button class="btn btn--ghost btn--big" type="button" data-play>Ещё раз — 51 ₽</button>
+          </div>
+          <p class="board__spent">Потрачено на игру: <b data-spent>0</b> ₽</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Цены и конфигуратор -->
+  <section class="section config" id="prices" aria-labelledby="cfg-title">
+    <div class="container">
+      <p class="eyebrow reveal">Предзаказ</p>
+      <h2 id="cfg-title" class="h2 reveal">Соберите свою гречку.</h2>
+      <div class="cfg">
+        <div class="cfg__side">
+          <div class="cfg__stage stage" data-anchor="cfg" aria-hidden="true">
+            <img class="poster" src="img/pack/front-reflect.webp" alt="" width="1024" height="1536" loading="lazy">
+          </div>
+          <p class="cfg__colorname mono" id="colorName">Натуральный титан</p>
+        </div>
+
+        <form class="cfg__panel" id="cfgForm" onsubmit="return false">
+          <fieldset>
+            <legend>Модель</legend>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="model" value="pro"><span><b>Гречка Pro</b><small>Матовая упаковка</small><em>2 490 ₽</em></span></label>
+              <label class="opt"><input type="radio" name="model" value="promax" checked><span><b>Гречка Pro MAX</b><small>«Авиационный» картон, Dynamic Ложка*</small><em>4 990 ₽</em></span></label>
+              <label class="opt"><input type="radio" name="model" value="ultra"><span><b>Гречка Ultra</b><small>2 кг, три кастрюли в комплекте не идут</small><em>12 990 ₽</em></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Цвет <span class="legend__val" id="colorLegend">Натуральный титан</span></legend>
+            <div class="swatches">
+              <label class="sw" title="Натуральный титан"><input type="radio" name="color" value="titan" checked aria-label="Натуральный титан"><span style="--c1:#FFFFFF;--c2:#D9DADD"></span></label>
+              <label class="sw" title="Обжаренный кофейный"><input type="radio" name="color" value="coffee" aria-label="Обжаренный кофейный"><span style="--c1:#C9A487;--c2:#7A5235"></span></label>
+              <label class="sw" title="Пустынная ядрица"><input type="radio" name="color" value="desert" aria-label="Пустынная ядрица"><span style="--c1:#F2E3C9;--c2:#C9A877"></span></label>
+              <label class="sw" title="Космический чугун"><input type="radio" name="color" value="iron" aria-label="Космический чугун"><span style="--c1:#7A7A80;--c2:#2A2A2E"></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Объём памяти</legend>
+            <div class="seg">
+              <label><input type="radio" name="size" value="s"><span><b>400 г</b><em>−1 000 ₽</em></span></label>
+              <label><input type="radio" name="size" value="m" checked><span><b>800 г</b><em>базовый</em></span></label>
+              <label><input type="radio" name="size" value="l"><span><b>1 ТБ*</b><em>+1 500 ₽</em></span></label>
+            </div>
+            <p class="tiny">* ТБ — тарелка борща. Гречка в объёме тарелки борща.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Дополнительно</legend>
+            <label class="check"><input type="checkbox" name="care" value="990"><i aria-hidden="true"><svg><use href="#check"/></svg></i><span><b>КашаCare+</b> — страховка от разваривания на 2 года</span><em>990 ₽</em></label>
+            <label class="check"><input type="checkbox" name="engrave" value="2990"><i aria-hidden="true"><svg><use href="#check"/></svg></i><span><b>Гравировка</b> инициалов на каждом зерне</span><em>2 990 ₽</em></label>
+            <label class="check"><input type="checkbox" name="trade" value="-3"><i aria-hidden="true"><svg><use href="#check"/></svg></i><span><b>Trade-in</b> — сдайте старую гречку</span><em>−3 ₽</em></label>
+          </fieldset>
+
+          <div class="cfg__total">
+            <p class="mono">Итого</p>
+            <p class="cfg__sum"><span id="total">4 990</span> ₽</p>
+            <p class="muted">или <span id="monthly">416</span> ₽/мес. на 12 месяцев</p>
+            <button class="btn btn--big btn--block" type="button" data-order>Предзаказать</button>
+            <p class="tiny">Курьер в белых перчатках позвонит в течение 2 часов. *Ложка продаётся отдельно.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Линейка и сравнение -->
+  <section class="section lineup-wrap" aria-labelledby="line-title">
+    <div class="container">
+      <p class="eyebrow reveal">Линейка</p>
+      <h2 id="line-title" class="h2 reveal">Какая гречка подходит&nbsp;вам?</h2>
+      <div class="lineup">
+        <article class="model reveal">
+          <h3>Гречка</h3><p class="mono">800 г</p>
+          <p>Ничем. Это и есть гречка.</p>
+          <p class="model__price">89 ₽</p>
+        </article>
+        <article class="model reveal">
+          <h3>Гречка Pro</h3><p class="mono">800 г</p>
+          <p>Матовая упаковка.</p>
+          <p class="model__price">2 490 ₽</p>
+        </article>
+        <article class="model model--hero reveal">
+          <h3>Гречка <span class="pro">Pro MAX</span></h3><p class="mono">800 г</p>
+          <p>Упаковка из «авиационного» картона, Dynamic Ложка.</p>
+          <p class="model__price model__price--pro">4 990 ₽</p>
+        </article>
+        <article class="model reveal">
+          <h3>Гречка Ultra</h3><p class="mono">2 кг</p>
+          <p>Три кастрюли в комплекте не идут.</p>
+          <p class="model__price">12 990 ₽</p>
+        </article>
+      </div>
+
+      <div class="cmp-wrap">
+        <figure class="cmp__photo reveal">
+          <img src="img/pack/front-reflect.webp" alt="Гречка Pro MAX с отражением" width="1024" height="1536" loading="lazy">
+        </figure>
+        <div>
+          <h3 class="h3 reveal">Почувствуйте разницу. Если получится.</h3>
+          <div class="cmp reveal" role="table" aria-label="Сравнение обычной гречки и Гречки Pro MAX">
+            <div class="cmp__row cmp__head" role="row"><span role="columnheader"></span><span role="columnheader">Обычная гречка</span><span role="columnheader">Гречка Pro MAX</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Ядер в горсти</span><span role="cell">8</span><span role="cell">8</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Время варки</span><span role="cell">20 мин</span><span role="cell">20 мин</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Вкус</span><span role="cell">Гречка</span><span role="cell">Гречка</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Упаковка</span><span role="cell">Пакет</span><span role="cell">Титановая коробка</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Ощущение</span><span role="cell">«Ну, гречка»</span><span role="cell">«Я флагман»</span></div>
+            <div class="cmp__row" role="row"><span role="rowheader">Цена</span><span role="cell">89 ₽</span><span role="cell"><b class="price-red">4 990 ₽</b></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Кому подходит -->
+  <section class="section fit-wrap" aria-labelledby="fit-title">
+    <div class="container">
+      <h2 id="fit-title" class="h2 reveal">Подойдёт ли вам Pro&nbsp;MAX?</h2>
+      <div class="fit">
+        <div class="fit__col reveal">
+          <h3>Подойдёт, если вы</h3>
+          <ul>
+            <li><svg><use href="#check"/></svg>покупаете флагман каждый год, даже если старый работает</li>
+            <li><svg><use href="#check"/></svg>фотографируете еду дольше, чем едите</li>
+            <li><svg><use href="#check"/></svg>считаете, что дорогое — значит вкусное</li>
+          </ul>
+        </div>
+        <div class="fit__col fit__col--no reveal">
+          <h3>Не подойдёт, если вы</h3>
+          <ul>
+            <li><svg><use href="#cross"/></svg>умеете читать состав</li>
+            <li><svg><use href="#cross"/></svg>видели гречку за 89 ₽</li>
+            <li><svg><use href="#cross"/></svg>живёте с мамой и она проверяет чеки</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Вопросы -->
+  <section class="section faq-wrap" id="faq" aria-labelledby="faq-title">
+    <div class="container faq__grid">
+      <div>
+        <p class="eyebrow reveal">Вопросы</p>
+        <h2 id="faq-title" class="h2 reveal">Частые вопросы.</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal"><summary>Чем Pro MAX отличается от обычной гречки?</summary><div class="faq__a"><p>Коробкой. И уверенностью в себе.</p></div></details>
+        <details class="reveal"><summary>4 990 ₽ за гречку?</summary><div class="faq__a"><p>Вы платите не за гречку. За гречку вы платите 89 ₽. Остальное — за чувство.</p></div></details>
+        <details class="reveal"><summary>Она правда варится быстрее?</summary><div class="faq__a"><p>Нет. 20 минут, как обычная. Но ощущается как 15, потому что вы всё это время думаете о том, сколько она стоила.</p></div></details>
+        <details class="reveal"><summary>У меня Android-тарелка. Будет работать?</summary><div class="faq__a"><p>Да. Гречка Pro MAX совместима со всеми тарелками, мисками и даже с крышкой от кастрюли.</p></div></details>
+        <details class="reveal"><summary>Кастрюля в комплекте?</summary><div class="faq__a"><p>Нет. Ради экологии мы убрали из коробки всё, кроме гречки.</p></div></details>
+        <details class="reveal"><summary>Что скажет мама?</summary><div class="faq__a"><p>«Опять деньги потратил». Это нормально и покрывается гарантией.</p></div></details>
+        <details class="reveal"><summary>Какая гарантия?</summary><div class="faq__a"><p>2 года. Если гречка разварилась — значит, вы её сварили.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Финальный призыв -->
+  <section class="final" aria-labelledby="final-title">
+    <div class="container final__inner">
+      <p class="eyebrow reveal">Предзаказ открыт</p>
+      <h2 id="final-title" class="final__title reveal">Осталось 2 места. <span>В кастрюле.</span></h2>
+      <div class="final__stage stage" data-anchor="final" aria-hidden="true">
+        <img class="poster" src="img/pack/hero.webp" alt="" width="1024" height="1536" loading="lazy">
+      </div>
+      <button class="btn btn--big reveal" type="button" data-order>Предзаказать от 4 990 ₽</button>
+      <p class="final__note reveal">Курьер в белых перчатках позвонит в течение 2 часов</p>
+    </div>
+  </section>
+</main>
+
+<!-- 12. Подвал -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <a class="logo" href="#top">КРУПА<i aria-hidden="true"></i></a>
+      <p>Гречка Pro MAX — это гречка. Ощущения могут отличаться от реальности. Ни одно зерно не пострадало. Не является публичной офертой.</p>
+    </div>
+    <div class="footer__cols">
+      <div><h4>Магазин</h4><a href="#prices">Pro MAX</a><a href="#prices">Ultra</a><a href="#prices">Trade-in</a></div>
+      <div><h4>Поддержка</h4><a href="#faq">Вопросы</a><a href="tel:+70000000000">8 800 ГРЕЧКА</a><a href="#faq">Гарантия</a></div>
+    </div>
+  </div>
+  <div class="container footer__legal mono">© 2026 Крупа Inc. Сделано на localhost.</div>
+</footer>
+
+<!-- Плашка «цена + Предзаказать» -->
+<div class="buybar show" id="buybar">
+  <div class="buybar__info"><b>Гречка Pro MAX</b><span>от <em>4 990 ₽</em></span></div>
+  <button class="btn btn--sm" type="button" data-order>Предзаказать</button>
+  <p class="buybar__note">Курьер в белых перчатках позвонит в течение 2 часов</p>
+</div>
+
+<!-- «Кто-то только что купил» -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Окно предзаказа -->
+<dialog class="modal" id="modal" aria-labelledby="modalTitle">
+  <div class="modal__body" id="modalStep1">
+    <button class="modal__x" type="button" data-close aria-label="Закрыть"><svg><use href="#cross"/></svg></button>
+    <p class="eyebrow">Ваш предзаказ</p>
+    <h3 id="modalTitle" class="modal__title">Почти ваша.</h3>
+    <ul class="summary" id="summary"></ul>
+    <label class="field">
+      <span>Как к вам обращаться?</span>
+      <input type="text" id="buyerName" placeholder="Например, Иван" autocomplete="off" maxlength="30">
+    </label>
+    <button class="btn btn--big btn--block" type="button" id="confirmBtn">Подтвердить предзаказ</button>
+    <p class="tiny">Нажимая кнопку, вы соглашаетесь, что это гречка.</p>
+  </div>
+  <div class="modal__body modal__done" id="modalStep2" hidden>
+    <button class="modal__x" type="button" data-close aria-label="Закрыть"><svg><use href="#cross"/></svg></button>
+    <div class="done__icon" aria-hidden="true"><svg><use href="#check"/></svg></div>
+    <h3 class="modal__title" id="doneTitle">Ваша гречка уже едет.</h3>
+    <p>Курьер в белых перчатках позвонит в течение 2 часов. Говорите шёпотом — гречка спит.</p>
+    <p class="order-id mono">Номер заказа <b id="orderId">GPM-0000</b></p>
+    <button class="btn btn--ghost btn--block" type="button" data-close>Вернуться к гречке</button>
+  </div>
+  <div class="rain" id="rain" aria-hidden="true"></div>
+</dialog>
+
+<!-- Шуточная оплата игры: без полей, без реальных данных -->
+<dialog class="modal pay" id="payModal" aria-labelledby="payTitle">
+  <div class="modal__body">
+    <button class="modal__x" type="button" data-pay-close aria-label="Закрыть"><svg><use href="#cross"/></svg></button>
+    <div class="pay__choose">
+      <p class="eyebrow">Оплата игры</p>
+      <h3 id="payTitle" class="modal__title">51 ₽ за право перебрать гречку.</h3>
+      <div class="pay__methods">
+        <button class="pay__opt" type="button" data-method="картой"><b>Оплатить картой</b><span>Карта не нужна</span></button>
+        <button class="pay__opt" type="button" data-method="через СБП"><b>СБП</b><span>Система бабушкиных платежей</span></button>
+        <button class="pay__opt" type="button" data-method="гречкой"><b>Оплатить гречкой</b><span>По курсу 1 зерно = 1 зерно</span></button>
+      </div>
+      <p class="tiny">Это шутка: деньги не списываются, данные не нужны.</p>
+    </div>
+    <div class="pay__wait" hidden>
+      <div class="pay__spinner" aria-hidden="true"></div>
+      <h3 class="modal__title">Проводим платёж…</h3>
+      <p class="muted">Оплата <span class="pay__method">картой</span>, 51 ₽</p>
+    </div>
+    <div class="pay__done" hidden>
+      <div class="done__icon" aria-hidden="true"><svg><use href="#check"/></svg></div>
+      <h3 class="modal__title">Оплачено 51 ₽.</h3>
+      <p class="muted">Чек отправлен бабушке.</p>
+    </div>
+  </div>
+</dialog>
+
+<script src="script.js" defer></script>
+<script src="grains.js" defer></script>
+<script type="module" src="box3d.js" async></script>
+</body>
+</html>
